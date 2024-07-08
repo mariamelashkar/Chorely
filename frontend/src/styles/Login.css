@@ -1,0 +1,40 @@
+.login {
+  max-width: 300px;
+  margin: 100px auto;
+  padding: 20px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.login h2 {
+  color: #2c3e50;
+}
+
+.login form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login form label {
+  margin-bottom: 10px;
+}
+
+.login form input {
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.login form button {
+  background-color: #3498db;
+  border: none;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.login form button:hover {
+  background-color: #2980b9;
+}

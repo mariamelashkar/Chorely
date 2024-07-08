@@ -1,0 +1,27 @@
+.task-list button {
+  background-color: #3498db;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.task-list button:hover {
+  background-color: #2980b9;
+}
+
+.task-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.task-list th, .task-list td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.task-list th {
+  background-color: #3498db;
+  color: white;
+}

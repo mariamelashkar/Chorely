@@ -1,0 +1,82 @@
+.user-management {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.user-management h3 {
+  margin-top: 20px;
+}
+
+.new-user-form {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.new-user-form label {
+  margin-top: 10px;
+  color: #333;
+}
+
+.new-user-form input,
+.new-user-form select {
+  margin-top: 5px;
+  padding: 8px;
+}
+
+.new-user-form button {
+  background-color: #007bff; /* Add button color */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 10px 0;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.new-user-form button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.user-management table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-management th, .user-management td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.user-management th {
+  background-color: #333; /* Change to your theme color */
+  color: white;
+}
+
+.user-management button {
+  background-color: #007bff; /* Button color */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 10px 0;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.user-management button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.user-management select {
+  padding: 5px;
+}
