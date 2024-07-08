@@ -1,27 +1,26 @@
 package admin
 
 import (
-	"encoding/json"
-	"net/http"
 	"task/models"
-	"log"
+	"golang.org/x/crypto/bcrypt"
+
 )
+var Users = make(map[string]models.User)
+var userIDCounter int
 
-var Users = []models.User{}
-var UserID = 1
-
-func CreateUser(w http.ResponseWriter, r *http.Request) {
-	var user models.User
-	err := json.NewDecoder(r.Body).Decode(&user)
+func AddUser(username, email, password, role string) error {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		log.Println("Failed to decode user:", err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		return err
 	}
-	user.ID = UserID
-	UserID++
-	user.Tasks = []int{} // Initialize tasks as an empty slice
-	Users = append(Users, user)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+	userIDCounter++
+	Users[username] = models.User{
+		ID:       userIDCounter,
+		Username: username,
+		Email:    email,
+		Password: string(hashedPassword),
+		Role:     role,
+		Tasks:    []int{},
+	}
+	return nil
 }

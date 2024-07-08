@@ -20,9 +20,13 @@ func AssignTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for i, user := range admin.Users {
+	// Iterate over the map to find the user by userID
+	for username, user := range admin.Users {
 		if user.ID == userID {
-			admin.Users[i].Tasks = append(admin.Users[i].Tasks, taskID)
+			// Modify the user's task list
+			user.Tasks = append(user.Tasks, taskID)
+			// Reassign the modified user back to the map
+			admin.Users[username] = user
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}

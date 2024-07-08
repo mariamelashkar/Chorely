@@ -1,15 +1,24 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"task/routers"
-
 	"github.com/rs/cors"
+	"log"
+	"github.com/joho/godotenv"
+	"task/internal/redis"
+
+
 )
 
 func main() {
 	router := routers.InitRoutes()
+	redis.InitRedis()
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
 
 	// Configure CORS settings
 	corsHandler := cors.New(cors.Options{
@@ -20,7 +29,6 @@ func main() {
 		AllowCredentials: true,
 	})
 
-	// Use the CORS handler
 	handler := corsHandler.Handler(router)
 
 	log.Println("Server started at :8080")
