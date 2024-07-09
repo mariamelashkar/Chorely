@@ -7,4 +7,5 @@ type Task struct {
 	DueDate     string `json:"due_date"`
 	Priority    string `json:"priority"`
 	Completed   bool   `json:"completed"`
+	AssignedTo  string `json:"assigned_to"` 
 }

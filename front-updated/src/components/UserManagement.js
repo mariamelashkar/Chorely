@@ -2,107 +2,195 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/UserManagement.css';
 
-function UserManagement({ tasks, onAddTask }) {
+
+function UserManagement() {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('User');
   const [users, setUsers] = useState([]);
-  const [newUser, setNewUser] = useState({ username: '', password: '', role: 'user' });
+  const [tasks, setTasks] = useState([]);
+  const [taskName, setTaskName] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [priority, setPriority] = useState('');
+  const [selectedUser, setSelectedUser] = useState('');
+  const [selectedTask, setSelectedTask] = useState('');
 
   useEffect(() => {
     fetchUsers();
+    fetchTasks();
   }, []);
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/users');
+      const response = await axios.get('http://localhost:8080/api/users', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
       setUsers(response.data || []);
     } catch (error) {
       console.error('Error fetching users', error);
     }
   };
 
-  const handleAssignTask = async (userId, taskId) => {
+  const fetchTasks = async () => {
     try {
-      await axios.post(`http://localhost:8080/api/users/${userId}/tasks/${taskId}`);
+      const response = await axios.get('http://localhost:8080/api/tasks', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      setTasks(response.data || []);
+    } catch (error) {
+      console.error('Error fetching tasks', error);
+    }
+  };
+
+  const handleAddUser = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(
+        'http://localhost:8080/api/users',
+        { username, email, password, role },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        }
+      );
       fetchUsers();
+      setUsername('');
+      setEmail('');
+      setPassword('');
+      setRole('User');
+    } catch (error) {
+      console.error('Error adding user', error);
+    }
+  };
+
+  const handleCreateTask = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(
+        'http://localhost:8080/api/tasks',
+        { title: taskName, description: taskDescription, due_date: dueDate, priority, completed: false },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        }
+      );
+      fetchTasks();
+      setTaskName('');
+      setTaskDescription('');
+      setDueDate('');
+      setPriority('');
+    } catch (error) {
+      console.error('Error creating task', error);
+    }
+  };
+
+  const handleAssignTask = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(
+        `http://localhost:8080/api/users/${selectedUser}/tasks/${selectedTask}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        }
+      );
+      fetchUsers();
+      fetchTasks();
     } catch (error) {
       console.error('Error assigning task', error);
     }
   };
 
-  const handleAddTask = () => {
-    onAddTask();
-  };
-
-  const handleCreateUser = async () => {
-    try {
-      await axios.post('http://localhost:8080/api/users', newUser);
-      setNewUser({ username: '', password: '', role: 'user' });
-      fetchUsers();
-    } catch (error) {
-      console.error('Error creating user', error);
-    }
-  };
-
   return (
-    <div className="user-management">
+    <div>
       <h2>User Management</h2>
-      <button onClick={handleAddTask}>Add Task</button>
-      <h3>Create New User</h3>
-      <div className="new-user-form">
-        <label>Username:</label>
+      <form onSubmit={handleAddUser}>
         <input
           type="text"
-          value={newUser.username}
-          onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
         />
-        <label>Password:</label>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
         <input
           type="password"
-          value={newUser.password}
-          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
         />
-        <label>Role:</label>
-        <select
-          value={newUser.role}
-          onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-        >
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
+        <select value={role} onChange={(e) => setRole(e.target.value)}>
+          <option value="User">User</option>
+          <option value="Admin">Admin</option>
         </select>
-        <button onClick={handleCreateUser}>Create User</button>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Tasks</th>
-            <th>Assign Task</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map(user => (
-            <tr key={user.id}>
-              <td>{user.username}</td>
-              <td>{user.role}</td>
-              <td>
-                <ul>
-                  {user.tasks.map(taskId => (
-                    <li key={taskId}>{tasks.find(task => task.id === taskId)?.title || 'Unknown Task'}</li>
-                  ))}
-                </ul>
-              </td>
-              <td>
-                <select onChange={(e) => handleAssignTask(user.id, e.target.value)}>
-                  <option value="">Select Task</option>
-                  {tasks.map(task => (
-                    <option key={task.id} value={task.id}>{task.title}</option>
-                  ))}
-                </select>
-              </td>
-            </tr>
+        <button type="submit">Add User</button>
+      </form>
+
+      <form onSubmit={handleCreateTask}>
+        <input
+          type="text"
+          placeholder="Task Title"
+          value={taskName}
+          onChange={(e) => setTaskName(e.target.value)}
+          required
+        />
+        <textarea
+          placeholder="Task Description"
+          value={taskDescription}
+          onChange={(e) => setTaskDescription(e.target.value)}
+          required
+        />
+        <input
+          type="date"
+          placeholder="Due Date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          required
+        />
+        <select value={priority} onChange={(e) => setPriority(e.target.value)} required>
+          <option value="">Select Priority</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+        <button type="submit">Create Task</button>
+      </form>
+
+      <form onSubmit={handleAssignTask}>
+        <select value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)} required>
+          <option value="">Select User</option>
+          {users.map((user) => (
+            <option key={user.id} value={user.id}>
+              {user.username}
+            </option>
           ))}
-        </tbody>
-      </table>
+        </select>
+        <select value={selectedTask} onChange={(e) => setSelectedTask(e.target.value)} required>
+          <option value="">Select Task</option>
+          {tasks.map((task) => (
+            <option key={task.id} value={task.id}>
+              {task.title}
+            </option>
+          ))}
+        </select>
+        <button type="submit">Assign Task</button>
+      </form>
+
+      <h3>All Users</h3>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>
+            {user.username} ({user.email})
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

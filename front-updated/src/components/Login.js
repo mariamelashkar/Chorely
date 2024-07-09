@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
 import '../styles/Login.css';
 
 const Login = ({ onLogin }) => {
@@ -11,11 +12,24 @@ const Login = ({ onLogin }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Perform login
     axios.post('http://localhost:8080/api/login', credentials)
       .then(response => {
-        localStorage.setItem('token', response.data.token);
-        onLogin(response.data.role);
+        console.log('Login response:', response.data);
+        const { token } = response.data;
+        if (token) {
+          localStorage.setItem('token', token);
+          const decodedToken = jwtDecode(token);
+          const role = decodedToken.role;
+          console.log('Decoded role:', role);
+          if (role) {
+            onLogin(role);
+          } else {
+            console.error('Role is missing in the decoded token:', decodedToken);
+            onLogin('defaultRole');
+          }
+        } else {
+          console.error('Invalid response format:', response.data);
+        }
       })
       .catch(error => {
         console.error('Login failed', error);

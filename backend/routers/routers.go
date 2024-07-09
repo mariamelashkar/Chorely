@@ -20,13 +20,10 @@ auth "task/handlers/auth"
 		}).Methods("GET")
 	
 		// Task routes
-		router.HandleFunc("/api/tasks", tasks.GetTasks).Methods("GET")
+		router.HandleFunc("/api/tasks", tasks.GetAllTasks).Methods("GET")
 		router.HandleFunc("/api/tasks", tasks.CreateTask).Methods("POST")
 		router.HandleFunc("/api/tasks/{id}", tasks.UpdateTask).Methods("PUT")
 		router.HandleFunc("/api/tasks/{id}", tasks.DeleteTask).Methods("DELETE")
-	
-		// Admin task routes
-		router.HandleFunc("/api/admin/tasks", tasks.GetTasks).Methods("GET")
 		router.HandleFunc("/api/users/{userID}/tasks/{taskID}", tasks.AssignTask).Methods("POST")
 	
 		// User routes

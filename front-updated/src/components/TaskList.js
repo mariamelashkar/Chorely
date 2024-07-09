@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/TaskList.css'
+import '../styles/TaskList.css';
 
 function TaskList({ tasks, onEditTask, onDeleteTask }) {
   return (
@@ -13,17 +13,19 @@ function TaskList({ tasks, onEditTask, onDeleteTask }) {
             <th>Due Date</th>
             <th>Priority</th>
             <th>Status</th>
+            <th>Assigned To</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {tasks.map(task => (
+          {tasks.map((task) => (
             <tr key={task.id}>
               <td>{task.title}</td>
               <td>{task.description}</td>
-              <td>{task.dueDate}</td>
+              <td>{new Date(task.due_date).toLocaleDateString()}</td>
               <td>{task.priority}</td>
               <td>{task.completed ? 'Completed' : 'Pending'}</td>
+              <td>{task.assigned_to}</td>
               <td>
                 <button onClick={() => onEditTask(task)}>Edit</button>
                 <button onClick={() => onDeleteTask(task.id)}>Delete</button>

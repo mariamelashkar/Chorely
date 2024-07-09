@@ -1,28 +1,19 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import '../styles/Sidebar.css';
 
 function Sidebar({ role }) {
   return (
-    <nav className="sidebar">
-      <h2>Task Manager</h2>
+    <div className="sidebar">
       <ul>
-        <li>
-          <NavLink to="/dashboard">Dashboard</NavLink>
-        </li>
-        <li>
-          <NavLink to="/tasks">Tasks</NavLink>
-        </li>
+        <li><Link to="/dashboard">Dashboard</Link></li>
+        <li><Link to="/tasks">Tasks</Link></li>
         {role === 'admin' && (
-          <li>
-            <NavLink to="/user-management">User Management</NavLink>
-          </li>
+          <li><Link to="/user-management">User Management</Link></li>
         )}
-        <li>
-          <NavLink to="/settings">Settings</NavLink>
-        </li>
+        <li><Link to="/settings">Settings</Link></li>
       </ul>
-    </nav>
+    </div>
   );
 }
 
