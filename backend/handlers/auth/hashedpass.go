@@ -6,7 +6,7 @@ import (
 )
 
 
-func HashPassword(password string) string {
-	hashedPassword := sha256.Sum256([]byte(password))
+func HashPassword(Password string) string {
+	hashedPassword := sha256.Sum256([]byte(Password))
 	return hex.EncodeToString(hashedPassword[:])
 }

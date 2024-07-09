@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 	"task/models"
-    admin  "task/handlers/admin"
+    auth  "task/handlers/auth"
 )
 
 
@@ -19,7 +19,7 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 
 	var userTasks []models.Task
 	for _, task := range Tasks {
-		for _, user := range admin.Users {
+		for _, user := range auth.Users {
 			if user.ID == userID {
 				for _, tID := range user.Tasks {
 					if tID == task.ID {

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 	"github.com/gorilla/mux"
-    admin "task/handlers/admin"
+	"task/handlers/auth"
 )
 
 func AssignTask(w http.ResponseWriter, r *http.Request) {
@@ -20,13 +20,10 @@ func AssignTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Iterate over the map to find the user by userID
-	for username, user := range admin.Users {
+	for username, user := range auth.Users {
 		if user.ID == userID {
-			// Modify the user's task list
 			user.Tasks = append(user.Tasks, taskID)
-			// Reassign the modified user back to the map
-			admin.Users[username] = user
+			auth.Users[username] = user
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}

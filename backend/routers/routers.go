@@ -2,10 +2,9 @@ package routers
 
 import (
 	"net/http"
-	admin "task/handlers/admin"
 	"task/handlers/tasks"
 	"task/middlewares"
-users "task/handlers/users"
+auth "task/handlers/auth"
 	"github.com/gorilla/mux"
 )
 
@@ -31,12 +30,12 @@ users "task/handlers/users"
 		router.HandleFunc("/api/users/{userID}/tasks/{taskID}", tasks.AssignTask).Methods("POST")
 	
 		// User routes
-		router.HandleFunc("/api/users", admin.GetUsers).Methods("GET")
-		router.HandleFunc("/api/users/{id}", admin.GetUser).Methods("GET")
-		router.HandleFunc("/api/users", admin.CreateUser).Methods("POST")
+		router.HandleFunc("/api/users", auth.GetUsers).Methods("GET")
+		router.HandleFunc("/api/users/{id}", auth.GetUser).Methods("GET")
+		router.HandleFunc("/api/users", auth.AddUserHandler).Methods("POST")
 	
 		// Login route
-		router.HandleFunc("/api/login", users.Login).Methods("POST")
+		router.HandleFunc("/api/login", auth.Login).Methods("POST")
 	
 		return router
 	}

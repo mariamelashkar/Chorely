@@ -3,11 +3,12 @@ package auth
 import (
 	"encoding/json"
 	"net/http"
-    "task/models"
-    "strconv"
-    "task/handlers/users/auth"
-    "task/internal/redis"
+	"os"
+	"strconv"
+	"task/internal/redis"
+	"task/models"
 )
+var JwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	var loginRequest models.LoginRequest
@@ -16,13 +17,20 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
-	userID, valid, err :=auth.CheckUserCredentials(loginRequest.Username, loginRequest.Password)
+
+	userID, valid, err := CheckUserCredentials(loginRequest.Username, loginRequest.Password)
 	if err != nil || !valid {
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
 
-	tokenString, err := redis.GenerateToken(strconv.Itoa(userID))
+	userRole, err := GetUserRole(loginRequest.Username)
+	if err != nil {
+		http.Error(w, "Could not retrieve user role", http.StatusInternalServerError)
+		return
+	}
+
+	tokenString, err := redis.GenerateToken(strconv.Itoa(userID), userRole)
 	if err != nil {
 		http.Error(w, "Could not create token", http.StatusInternalServerError)
 		return

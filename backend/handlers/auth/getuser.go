@@ -1,4 +1,4 @@
-package admin
+package auth
 
 import (
 	"encoding/json"
@@ -9,7 +9,6 @@ import (
 	"errors"
 )
 
-var users = []models.User{}
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := GetAllUsers()
@@ -39,14 +38,24 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllUsers() ([]models.User, error) {
-	return users , nil
+	Mu.Lock()
+	defer Mu.Unlock()
+
+	allUsers := []models.User{}
+	for _, user := range Users{
+		allUsers = append(allUsers, user)
+	}
+	return allUsers, nil
 }
 
 func GetUserByID(id int) (models.User, error) {
+	Mu.Lock()
+	defer Mu.Unlock()
+
 	for _, user := range Users {
 		if user.ID == id {
 			return user, nil
 		}
 	}
-	return models.User{}, errors.New("User not found")
+	return models.User{}, errors.New("user not found")
 }

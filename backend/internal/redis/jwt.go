@@ -7,9 +7,10 @@ import (
 )
 
 
-func GenerateToken(userID string) (string, error) {
+func GenerateToken(userID, role string) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id": userID,
+		"role":    role,
 		"exp":     time.Now().Add(time.Minute * 30).Unix(),
 	}
 
