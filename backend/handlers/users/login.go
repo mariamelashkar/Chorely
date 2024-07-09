@@ -22,14 +22,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Generate token
 	tokenString, err := redis.GenerateToken(strconv.Itoa(userID))
 	if err != nil {
 		http.Error(w, "Could not create token", http.StatusInternalServerError)
 		return
 	}
 
-	// Store token in Redis
 	err = redis.StoreToken(tokenString)
 	if err != nil {
 		http.Error(w, "Could not store token", http.StatusInternalServerError)
