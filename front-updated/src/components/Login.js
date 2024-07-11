@@ -1,55 +1,67 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+// components/Login.js
+import React, { useContext } from 'react';
+import { Form, Input, Button, Checkbox } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from './AuthContext';
 import '../styles/Login.css';
 
-const Login = ({ onLogin }) => {
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
+const Login = () => {
+  const { setAuth } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+  const onFinish = (values) => {
+    console.log('Success:', values);
+    // Perform login logic
+    localStorage.setItem('token', 'dummy-token');
+    localStorage.setItem('role', values.username === 'admin' ? 'admin' : 'user');
+    setAuth({
+      isLogged: true,
+      role: values.username === 'admin' ? 'admin' : 'user',
+    });
+    navigate('/dashboard');
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axios.post('http://localhost:8080/api/login', credentials)
-      .then(response => {
-        console.log('Login response:', response.data);
-        const { token } = response.data;
-        if (token) {
-          localStorage.setItem('token', token);
-          const decodedToken = jwtDecode(token);
-          const role = decodedToken.role;
-          console.log('Decoded role:', role);
-          if (role) {
-            onLogin(role);
-          } else {
-            console.error('Role is missing in the decoded token:', decodedToken);
-            onLogin('defaultRole');
-          }
-        } else {
-          console.error('Invalid response format:', response.data);
-        }
-      })
-      .catch(error => {
-        console.error('Login failed', error);
-      });
+  const onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo);
   };
 
   return (
-    <div className="login">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Username:
-          <input type="text" name="username" value={credentials.username} onChange={handleChange} />
-        </label>
-        <label>
-          Password:
-          <input type="password" name="password" value={credentials.password} onChange={handleChange} />
-        </label>
-        <button type="submit">Login</button>
-      </form>
+    <div className="login-form-wrapper">
+      <Form
+        name="basic"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
+      >
+        <Form.Item
+          label="Username"
+          name="username"
+          rules={[{ required: true, message: 'Please input your username!' }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[{ required: true, message: 'Please input your password!' }]}
+        >
+          <Input.Password />
+        </Form.Item>
+
+        <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 8, span: 16 }}>
+          <Checkbox>Remember me</Checkbox>
+        </Form.Item>
+
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   );
 };

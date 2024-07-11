@@ -1,198 +1,147 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import '../styles/UserManagement.css';
+import { Table, Button, Modal, Form, Input, Select } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
+const { Option } = Select;
 
-function UserManagement() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState('User');
+const UserManagement = () => {
   const [users, setUsers] = useState([]);
-  const [tasks, setTasks] = useState([]);
-  const [taskName, setTaskName] = useState('');
-  const [taskDescription, setTaskDescription] = useState('');
-  const [dueDate, setDueDate] = useState('');
-  const [priority, setPriority] = useState('');
-  const [selectedUser, setSelectedUser] = useState('');
-  const [selectedTask, setSelectedTask] = useState('');
+  const [isUserModalVisible, setIsUserModalVisible] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userForm] = Form.useForm();
 
   useEffect(() => {
     fetchUsers();
-    fetchTasks();
   }, []);
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/users', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      });
-      setUsers(response.data || []);
+      const response = await fetch('/api/users');
+      const data = await response.json();
+      setUsers(data);
     } catch (error) {
-      console.error('Error fetching users', error);
+      console.error('Error fetching users:', error);
     }
   };
 
-  const fetchTasks = async () => {
+  const showUserModal = (user) => {
+    setSelectedUser(user);
+    if (user) {
+      userForm.setFieldsValue(user);
+    }
+    setIsUserModalVisible(true);
+  };
+
+  const handleUserModalCancel = () => {
+    setIsUserModalVisible(false);
+    setSelectedUser(null);
+    userForm.resetFields();
+  };
+
+  const onUserFinish = async (values) => {
     try {
-      const response = await axios.get('http://localhost:8080/api/tasks', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      });
-      setTasks(response.data || []);
+      const response = selectedUser
+        ? await fetch(`/api/users/${selectedUser.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(values),
+          })
+        : await fetch('/api/users', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(values),
+          });
+      if (response.ok) {
+        fetchUsers();
+        handleUserModalCancel();
+      }
     } catch (error) {
-      console.error('Error fetching tasks', error);
+      console.error('Error saving user:', error);
     }
   };
 
-  const handleAddUser = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post(
-        'http://localhost:8080/api/users',
-        { username, email, password, role },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+  const deleteUser = async (userId) => {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this user?',
+      icon: <ExclamationCircleOutlined />,
+      onOk: async () => {
+        try {
+          const response = await fetch(`/api/users/${userId}`, {
+            method: 'DELETE',
+          });
+          if (response.ok) {
+            fetchUsers();
+          }
+        } catch (error) {
+          console.error('Error deleting user:', error);
         }
-      );
-      fetchUsers();
-      setUsername('');
-      setEmail('');
-      setPassword('');
-      setRole('User');
-    } catch (error) {
-      console.error('Error adding user', error);
-    }
+      },
+    });
   };
 
-  const handleCreateTask = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post(
-        'http://localhost:8080/api/tasks',
-        { title: taskName, description: taskDescription, due_date: dueDate, priority, completed: false },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-        }
-      );
-      fetchTasks();
-      setTaskName('');
-      setTaskDescription('');
-      setDueDate('');
-      setPriority('');
-    } catch (error) {
-      console.error('Error creating task', error);
-    }
-  };
-
-  const handleAssignTask = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post(
-        `http://localhost:8080/api/users/${selectedUser}/tasks/${selectedTask}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-        }
-      );
-      fetchUsers();
-      fetchTasks();
-    } catch (error) {
-      console.error('Error assigning task', error);
-    }
-  };
+  const userColumns = [
+    {
+      title: 'Username',
+      dataIndex: 'username',
+      key: 'username',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+    },
+    {
+      title: 'Role',
+      dataIndex: 'role',
+      key: 'role',
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (text, record) => (
+        <>
+          <Button onClick={() => showUserModal(record)}>Edit</Button>
+          <Button onClick={() => deleteUser(record.id)}>Delete</Button>
+        </>
+      ),
+    },
+  ];
 
   return (
     <div>
-      <h2>User Management</h2>
-      <form onSubmit={handleAddUser}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="User">User</option>
-          <option value="Admin">Admin</option>
-        </select>
-        <button type="submit">Add User</button>
-      </form>
+      <Button onClick={() => showUserModal(null)}>Create User</Button>
+      <Table columns={userColumns} dataSource={users} rowKey="id" />
 
-      <form onSubmit={handleCreateTask}>
-        <input
-          type="text"
-          placeholder="Task Title"
-          value={taskName}
-          onChange={(e) => setTaskName(e.target.value)}
-          required
-        />
-        <textarea
-          placeholder="Task Description"
-          value={taskDescription}
-          onChange={(e) => setTaskDescription(e.target.value)}
-          required
-        />
-        <input
-          type="date"
-          placeholder="Due Date"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-          required
-        />
-        <select value={priority} onChange={(e) => setPriority(e.target.value)} required>
-          <option value="">Select Priority</option>
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
-        </select>
-        <button type="submit">Create Task</button>
-      </form>
-
-      <form onSubmit={handleAssignTask}>
-        <select value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)} required>
-          <option value="">Select User</option>
-          {users.map((user) => (
-            <option key={user.id} value={user.id}>
-              {user.username}
-            </option>
-          ))}
-        </select>
-        <select value={selectedTask} onChange={(e) => setSelectedTask(e.target.value)} required>
-          <option value="">Select Task</option>
-          {tasks.map((task) => (
-            <option key={task.id} value={task.id}>
-              {task.title}
-            </option>
-          ))}
-        </select>
-        <button type="submit">Assign Task</button>
-      </form>
-
-      <h3>All Users</h3>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            {user.username} ({user.email})
-          </li>
-        ))}
-      </ul>
+      <Modal title={selectedUser ? 'Edit User' : 'Create User'} visible={isUserModalVisible} onCancel={handleUserModalCancel} footer={null}>
+        <Form form={userForm} onFinish={onUserFinish}>
+          <Form.Item name="username" label="Username" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="password" label="Password" rules={[{ required: true }]}>
+            <Input.Password />
+          </Form.Item>
+          <Form.Item name="role" label="Role" rules={[{ required: true }]}>
+            <Select>
+              <Option value="admin">Admin</Option>
+              <Option value="user">User</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Save User
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
-}
+};
 
 export default UserManagement;

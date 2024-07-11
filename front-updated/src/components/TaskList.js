@@ -1,41 +1,83 @@
-import React from 'react';
-import '../styles/TaskList.css';
+import React, { useEffect, useState } from 'react';
+import { Table, Button, Space } from 'antd';
 
-function TaskList({ tasks, onEditTask, onDeleteTask }) {
-  return (
-    <div className="task-list">
-      <h2>Tasks</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Due Date</th>
-            <th>Priority</th>
-            <th>Status</th>
-            <th>Assigned To</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.map((task) => (
-            <tr key={task.id}>
-              <td>{task.title}</td>
-              <td>{task.description}</td>
-              <td>{new Date(task.due_date).toLocaleDateString()}</td>
-              <td>{task.priority}</td>
-              <td>{task.completed ? 'Completed' : 'Pending'}</td>
-              <td>{task.assigned_to}</td>
-              <td>
-                <button onClick={() => onEditTask(task)}>Edit</button>
-                <button onClick={() => onDeleteTask(task.id)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
+const TaskList = () => {
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch('/api/tasks');
+      const data = await response.json();
+      setTasks(data);
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    }
+  };
+
+  const completeTask = async (taskId) => {
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'completed' }),
+      });
+      if (response.ok) {
+        fetchTasks();
+      }
+    } catch (error) {
+      console.error('Error completing task:', error);
+    }
+  };
+
+  const columns = [
+    {
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title',
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+    },
+    {
+      title: 'Due Date',
+      dataIndex: 'dueDate',
+      key: 'dueDate',
+    },
+    {
+      title: 'Priority',
+      dataIndex: 'priority',
+      key: 'priority',
+    },
+    {
+      title: 'Assigned To',
+      dataIndex: 'assignedTo',
+      key: 'assignedTo',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (text, record) => (
+        <Space size="middle">
+          <Button onClick={() => completeTask(record.id)}>Mark Completed</Button>
+        </Space>
+      ),
+    },
+  ];
+
+  return <Table columns={columns} dataSource={tasks} rowKey="id" />;
+};
 
 export default TaskList;

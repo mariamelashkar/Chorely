@@ -1,3 +1,11 @@
 .settings {
-  padding: 15px;
+  padding: 20px;
+}
+
+.settings h2 {
+  margin-bottom: 20px;
+}
+
+.settings p {
+  font-size: 16px;
 }
