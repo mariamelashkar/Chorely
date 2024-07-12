@@ -1,31 +1,32 @@
-// components/CreateUser.js
-import React from 'react';
+// components/EditUser.js
+import React, { useEffect } from 'react';
 import { Form, Input, Button, Select } from 'antd';
 
-const { Option } = Select;
+const EditUser = ({ initialValues, onFinish }) => {
+  const [form] = Form.useForm();
 
-const CreateUser = ({ onFinish, onCancel }) => {
-  const handleFinish = async (values) => {
-    try {
-      await fetch('http://localhost:8080/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
-      onFinish();
-      onCancel();
-    } catch (error) {
-      console.error('Error creating user:', error);
-    }
+  useEffect(() => {
+    form.setFieldsValue({
+      username: initialValues.username,
+      email: initialValues.email,
+      role: initialValues.role,
+    });
+  }, [initialValues, form]);
+
+  const onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo);
   };
 
   return (
     <Form
-      name="createUser"
-      onFinish={handleFinish}
-      initialValues={{ role: 'user' }}
+      form={form}
+      name="edit-user"
+      onFinish={(values) => {
+        const updatedUser = { ...initialValues, ...values };
+        onFinish(updatedUser);
+      }}
+      onFinishFailed={onFinishFailed}
+      autoComplete="off"
     >
       <Form.Item
         label="Username"
@@ -34,6 +35,7 @@ const CreateUser = ({ onFinish, onCancel }) => {
       >
         <Input />
       </Form.Item>
+
       <Form.Item
         label="Email"
         name="email"
@@ -41,23 +43,25 @@ const CreateUser = ({ onFinish, onCancel }) => {
       >
         <Input />
       </Form.Item>
+
       <Form.Item
         label="Password"
         name="password"
-        rules={[{ required: true, message: 'Please input the password!' }]}
       >
         <Input.Password />
       </Form.Item>
+
       <Form.Item
         label="Role"
         name="role"
         rules={[{ required: true, message: 'Please select the role!' }]}
       >
         <Select>
-          <Option value="user">User</Option>
-          <Option value="admin">Admin</Option>
+          <Select.Option value="admin">Admin</Select.Option>
+          <Select.Option value="user">User</Select.Option>
         </Select>
       </Form.Item>
+
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Save User
@@ -67,4 +71,4 @@ const CreateUser = ({ onFinish, onCancel }) => {
   );
 };
 
-export default CreateUser;
+export default EditUser;

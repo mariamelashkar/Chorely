@@ -1,6 +1,6 @@
 // components/Login.js
 import React, { useContext } from 'react';
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button, Checkbox, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import '../styles/Login.css';
@@ -9,16 +9,34 @@ const Login = () => {
   const { setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const onFinish = (values) => {
-    console.log('Success:', values);
-    // Perform login logic
-    localStorage.setItem('token', 'dummy-token');
-    localStorage.setItem('role', values.username === 'admin' ? 'admin' : 'user');
-    setAuth({
-      isLogged: true,
-      role: values.username === 'admin' ? 'admin' : 'user',
-    });
-    navigate('/dashboard');
+  const onFinish = async (values) => {
+    try {
+      const response = await fetch('http://localhost:8080/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('role', values.username === 'admin' ? 'admin' : 'user');
+        setAuth({
+          isLogged: true,
+          role: values.username === 'admin' ? 'admin' : 'user',
+        });
+        navigate('/dashboard');
+        message.success('Login successful');
+      } else {
+        message.error(data.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      message.error('Login failed');
+    }
   };
 
   const onFinishFailed = (errorInfo) => {

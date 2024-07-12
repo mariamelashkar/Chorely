@@ -1,224 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, DatePicker, Select } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-
-const { Option } = Select;
+import { Table, Button, Modal } from 'antd';
+import CreateUser from './CreateUser';
+import EditUser from './EditUser';
+import '../styles/AdminDashboard.css';
 
 const AdminDashboard = () => {
-  const [tasks, setTasks] = useState([]);
   const [users, setUsers] = useState([]);
-  const [isTaskModalVisible, setIsTaskModalVisible] = useState(false);
-  const [isUserModalVisible, setIsUserModalVisible] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [taskForm] = Form.useForm();
-  const [userForm] = Form.useForm();
-
-  useEffect(() => {
-    fetchTasks();
-    fetchUsers();
-  }, []);
-
-  const fetchTasks = async () => {
-    try {
-      const response = await fetch('/api/tasks');
-      const data = await response.json();
-      setTasks(data);
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
-    }
-  };
 
   const fetchUsers = async () => {
+    setLoading(true);
     try {
-      const response = await fetch('/api/users');
+      const response = await fetch('http://localhost:8080/api/users');
       const data = await response.json();
       setUsers(data);
     } catch (error) {
       console.error('Error fetching users:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const showTaskModal = (task) => {
-    setSelectedTask(task);
-    if (task) {
-      taskForm.setFieldsValue(task);
-    }
-    setIsTaskModalVisible(true);
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const showModal = () => {
+    setIsModalOpen(true);
   };
 
-  const showUserModal = (user) => {
-    setSelectedUser(user);
-    if (user) {
-      userForm.setFieldsValue(user);
-    }
-    setIsUserModalVisible(true);
-  };
-
-  const handleTaskModalCancel = () => {
-    setIsTaskModalVisible(false);
-    setSelectedTask(null);
-    taskForm.resetFields();
-  };
-
-  const handleUserModalCancel = () => {
-    setIsUserModalVisible(false);
+  const handleCancel = () => {
+    setIsModalOpen(false);
     setSelectedUser(null);
-    userForm.resetFields();
   };
 
-  const onTaskFinish = async (values) => {
+  const handleEdit = (user) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
     try {
-      const response = selectedTask
-        ? await fetch(`/api/tasks/${selectedTask.id}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(values),
-          })
-        : await fetch('/api/tasks', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(values),
-          });
-      if (response.ok) {
-        fetchTasks();
-        handleTaskModalCancel();
-      }
-    } catch (error) {
-      console.error('Error saving task:', error);
-    }
-  };
-
-  const onUserFinish = async (values) => {
-    try {
-      const response = selectedUser
-        ? await fetch(`/api/users/${selectedUser.id}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(values),
-          })
-        : await fetch('/api/users', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(values),
-          });
-      if (response.ok) {
-        fetchUsers();
-        handleUserModalCancel();
-      }
-    } catch (error) {
-      console.error('Error saving user:', error);
-    }
-  };
-
-  const deleteTask = async (taskId) => {
-    Modal.confirm({
-      title: 'Are you sure you want to delete this task?',
-      icon: <ExclamationCircleOutlined />,
-      onOk: async () => {
-        try {
-          const response = await fetch(`/api/tasks/${taskId}`, {
-            method: 'DELETE',
-          });
-          if (response.ok) {
-            fetchTasks();
-          }
-        } catch (error) {
-          console.error('Error deleting task:', error);
-        }
-      },
-    });
-  };
-
-  const deleteUser = async (userId) => {
-    Modal.confirm({
-      title: 'Are you sure you want to delete this user?',
-      icon: <ExclamationCircleOutlined />,
-      onOk: async () => {
-        try {
-          const response = await fetch(`/api/users/${userId}`, {
-            method: 'DELETE',
-          });
-          if (response.ok) {
-            fetchUsers();
-          }
-        } catch (error) {
-          console.error('Error deleting user:', error);
-        }
-      },
-    });
-  };
-
-  const markTaskAsCompleted = async (taskId) => {
-    try {
-      const response = await fetch(`/api/tasks/${taskId}/complete`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      await fetch(`http://localhost:8080/api/users/${id}`, {
+        method: 'DELETE',
       });
-      if (response.ok) {
-        fetchTasks();
-      }
+      fetchUsers();
     } catch (error) {
-      console.error('Error marking task as completed:', error);
+      console.error('Error deleting user:', error);
     }
   };
 
-  const taskColumns = [
-    {
-      title: 'Title',
-      dataIndex: 'title',
-      key: 'title',
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: 'Due Date',
-      dataIndex: 'dueDate',
-      key: 'dueDate',
-    },
-    {
-      title: 'Priority',
-      dataIndex: 'priority',
-      key: 'priority',
-    },
-    {
-      title: 'Assigned To',
-      dataIndex: 'assignedTo',
-      key: 'assignedTo',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (text) => (text ? 'Completed' : 'Pending'),
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (text, record) => (
-        <>
-          <Button onClick={() => showTaskModal(record)}>Edit</Button>
-          <Button onClick={() => deleteTask(record.id)}>Delete</Button>
-          <Button onClick={() => markTaskAsCompleted(record.id)}>Mark Completed</Button>
-        </>
-      ),
-    },
-  ];
-
-  const userColumns = [
+  const columns = [
     {
       title: 'Username',
       dataIndex: 'username',
@@ -237,80 +71,43 @@ const AdminDashboard = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (text, record) => (
+      render: (_, record) => (
         <>
-          <Button onClick={() => showUserModal(record)}>Edit</Button>
-          <Button onClick={() => deleteUser(record.id)}>Delete</Button>
+          <Button onClick={() => handleEdit(record)}>Edit</Button>
+          <Button danger onClick={() => handleDelete(record.id)}>
+            Delete
+          </Button>
         </>
       ),
     },
   ];
 
   return (
-    <div>
-      <Button onClick={() => showTaskModal(null)}>Create Task</Button>
-      <Button onClick={() => showUserModal(null)}>Create User</Button>
-      <Table columns={taskColumns} dataSource={tasks} rowKey="id" />
-      <Table columns={userColumns} dataSource={users} rowKey="id" />
-
-      <Modal title={selectedTask ? 'Edit Task' : 'Create Task'} visible={isTaskModalVisible} onCancel={handleTaskModalCancel} footer={null}>
-        <Form form={taskForm} onFinish={onTaskFinish}>
-          <Form.Item name="title" label="Title" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="description" label="Description" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="dueDate" label="Due Date" rules={[{ required: true }]}>
-            <DatePicker />
-          </Form.Item>
-          <Form.Item name="priority" label="Priority" rules={[{ required: true }]}>
-            <Select>
-              <Option value="low">Low</Option>
-              <Option value="medium">Medium</Option>
-              <Option value="high">High</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item name="assignedTo" label="Assigned To" rules={[{ required: true }]}>
-            <Select>
-              {users.map((user) => (
-                <Option key={user.id} value={user.username}>
-                  {user.username}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Save Task
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      <Modal title={selectedUser ? 'Edit User' : 'Create User'} visible={isUserModalVisible} onCancel={handleUserModalCancel} footer={null}>
-        <Form form={userForm} onFinish={onUserFinish}>
-          <Form.Item name="username" label="Username" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="password" label="Password" rules={[{ required: true }]}>
-            <Input.Password />
-          </Form.Item>
-          <Form.Item name="role" label="Role" rules={[{ required: true }]}>
-            <Select>
-              <Option value="admin">Admin</Option>
-              <Option value="user">User</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Save User
-            </Button>
-          </Form.Item>
-        </Form>
+    <div className="admin-dashboard">
+      <Button type="primary" onClick={showModal}>
+        Create User
+      </Button>
+      <Table
+        columns={columns}
+        dataSource={users}
+        loading={loading}
+        rowKey="id"
+      />
+      <Modal
+        title={selectedUser ? 'Edit User' : 'Create User'}
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        {selectedUser ? (
+          <EditUser
+            initialValues={selectedUser}
+            onFinish={fetchUsers}
+            onCancel={handleCancel}
+          />
+        ) : (
+          <CreateUser onFinish={fetchUsers} onCancel={handleCancel} />
+        )}
       </Modal>
     </div>
   );
