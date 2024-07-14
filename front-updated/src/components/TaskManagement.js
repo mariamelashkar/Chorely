@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, message } from 'antd';
+import { Button, Table, Modal, message } from 'antd';
 import axios from 'axios';
-import TaskForm from './TaskForm';
+import moment from 'moment';
+import CreateTask from './CreateTask';
 
-const TaskList = () => {
+const TaskManagement = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editTask, setEditTask] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -35,9 +36,14 @@ const TaskList = () => {
     }
   };
 
-  const handleEdit = (task) => {
-    setEditTask(task);
-    setModalVisible(true);
+  const showModal = (task) => {
+    setSelectedTask(task);
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setSelectedTask(null);
+    setIsModalOpen(false);
   };
 
   const handleDelete = async (id) => {
@@ -48,11 +54,6 @@ const TaskList = () => {
     } catch (error) {
       message.error('Failed to delete task');
     }
-  };
-
-  const handleModalCancel = () => {
-    setEditTask(null);
-    setModalVisible(false);
   };
 
   const columns = [
@@ -93,7 +94,7 @@ const TaskList = () => {
       key: 'actions',
       render: (text, record) => (
         <>
-          <Button onClick={() => handleEdit(record)}>Edit</Button>
+          <Button onClick={() => showModal(record)}>Edit</Button>
           <Button onClick={() => handleDelete(record.id)} type="danger">
             Delete
           </Button>
@@ -103,21 +104,31 @@ const TaskList = () => {
   ];
 
   return (
-    <>
-      <Button type="primary" onClick={() => setModalVisible(true)}>
+    <div className="task-management">
+      <Button type="primary" onClick={() => showModal(null)}>
         Create Task
       </Button>
-      <Table dataSource={tasks} columns={columns} rowKey="id" loading={loading} />
+      <Table
+        columns={columns}
+        dataSource={tasks}
+        loading={loading}
+        rowKey="id"
+      />
       <Modal
-        title={editTask ? 'Edit Task' : 'Create Task'}
-        visible={modalVisible}
-        onCancel={handleModalCancel}
+        title={selectedTask ? 'Edit Task' : 'Create Task'}
+        open={isModalOpen}
+        onCancel={handleCancel}
         footer={null}
       >
-        <TaskForm fetchTasks={fetchTasks} editTask={editTask} users={users} onCancel={handleModalCancel} />
+        <CreateTask
+          fetchTasks={fetchTasks}
+          editTask={selectedTask}
+          users={users}
+          onCancel={handleCancel}
+        />
       </Modal>
-    </>
+    </div>
   );
 };
 
-export default TaskList;
+export default TaskManagement;

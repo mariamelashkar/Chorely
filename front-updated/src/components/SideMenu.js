@@ -1,36 +1,21 @@
-import React from 'react';
 import { Menu } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import {
-  DashboardOutlined,
-  UnorderedListOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 
-const items = [
-  { label: 'Dashboard', key: '/dashboard', icon: <DashboardOutlined /> },
-  { label: 'Tasks', key: '/tasks', icon: <UnorderedListOutlined /> },
-  { label: 'User Management', key: '/user-management', icon: <UserOutlined /> },
-  { label: 'Settings', key: '/settings', icon: <SettingOutlined /> },
-];
-
-const SideMenu = () => {
-  const navigate = useNavigate();
-
-  const onClick = (e) => {
-    navigate(e.key);
-  };
-
-  return (
-    <Menu
-      onClick={onClick}
-      defaultSelectedKeys={['/dashboard']}
-      mode="inline"
-      theme="dark"
-      items={items}
-    />
-  );
-};
+const SideMenu = () => (
+  <Menu mode="inline" defaultSelectedKeys={['1']} style={{ height: '100%', borderRight: 0 }}>
+    <Menu.Item key="1">
+      <Link to="/dashboard">Dashboard</Link>
+    </Menu.Item>
+    <Menu.Item key="2">
+      <Link to="/tasks">Tasks</Link>
+    </Menu.Item>
+    <Menu.Item key="3">
+      <Link to="/user-management">User Management</Link>
+    </Menu.Item>
+    <Menu.Item key="4">
+      <Link to="/settings">Settings</Link>
+    </Menu.Item>
+  </Menu>
+);
 
 export default SideMenu;

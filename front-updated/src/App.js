@@ -5,11 +5,12 @@ import { AuthProvider, AuthContext } from './components/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import Login from './components/Login';
 import Dashboard from './components/AdminDashboard';
-import TaskList from './components/TaskList';
+import TaskManagement from './components/TaskManagement';
 import UserManagement from './components/UserManagement';
 import Settings from './components/Settings';
 import SideMenu from './components/SideMenu';
 import './index.css';
+
 
 const { Header, Content, Sider } = Layout;
 
@@ -37,11 +38,11 @@ const App = () => {
                   </PrivateRoute>
                 }
               />
-              <Route
+            <Route
                 path="/tasks"
                 element={
                   <PrivateRoute>
-                    <TaskList />
+                    <TaskManagement />
                   </PrivateRoute>
                 }
               />
