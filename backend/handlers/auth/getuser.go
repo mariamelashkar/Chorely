@@ -11,14 +11,20 @@ import (
 
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := GetAllUsers()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+    Mu.Lock()
+    defer Mu.Unlock()
 
-	json.NewEncoder(w).Encode(users)
+    var usersWithoutPassword []models.User
+    for _, user := range Users {
+        userWithoutPassword := user
+        userWithoutPassword.Password = ""
+        usersWithoutPassword = append(usersWithoutPassword, userWithoutPassword)
+    }
+
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(usersWithoutPassword)
 }
+
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -36,6 +42,8 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(user)
 }
+
+//internal functions 
 
 func GetAllUsers() ([]models.User, error) {
 	Mu.Lock()

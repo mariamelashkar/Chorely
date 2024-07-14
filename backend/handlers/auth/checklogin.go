@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 )
-
 func CheckUserCredentials(username, password string) (int, bool, error) {
 	Mu.Lock()
 	defer Mu.Unlock()
@@ -17,12 +16,12 @@ func CheckUserCredentials(username, password string) (int, bool, error) {
 		return 0, false, errors.New("invalid username or password")
 	}
 
-	hashedPassword := HashPassword(password)
 	fmt.Printf("Login attempt for user: %s\n", username)
-	fmt.Printf("Entered Password Hash: %s\n", hashedPassword)
+	fmt.Printf("Entered Password: %s\n", password)
 	fmt.Printf("Stored Password Hash: %s\n", user.Password)
 
-	if user.Password != hashedPassword {
+	err :=CheckPasswordHash(password, user.Password)
+	if err != nil {
 		fmt.Printf("Login attempt failed for user: %s. Reason: password mismatch\n", username)
 		return 0, false, errors.New("invalid username or password")
 	}

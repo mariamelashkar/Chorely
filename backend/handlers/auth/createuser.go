@@ -9,7 +9,6 @@ import (
 
 )
 
-
 func AddUser(username, email, password, role string) (int, error) {
 	Mu.Lock()
 	defer Mu.Unlock()
@@ -18,7 +17,11 @@ func AddUser(username, email, password, role string) (int, error) {
 		return 0, errors.New("username already exists")
 	}
 
-	hashedPassword := HashPassword(password)
+	hashedPassword, err :=HashPassword(password)
+	if err != nil {
+		return 0, errors.New("error hashing password")
+	}
+
 	fmt.Printf("Registering user: %s\n", username)
 	fmt.Printf("Hashed Password: %s\n", hashedPassword)
 
@@ -37,7 +40,6 @@ func AddUser(username, email, password, role string) (int, error) {
 }
 
 func AddUserHandler(w http.ResponseWriter, r *http.Request) {
-
 	var registerRequest models.RegisterRequest
 
 	err := json.NewDecoder(r.Body).Decode(&registerRequest)

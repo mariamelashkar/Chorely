@@ -18,7 +18,7 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var userTasks []models.Task
-	for _, task := range Tasks {
+	for _, task := range models.Tasks {
 		for _, user := range auth.Users {
 			if user.ID == userID {
 				for _, tID := range user.Tasks {
@@ -35,5 +35,5 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 
 func GetAllTasks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(Tasks)
+	json.NewEncoder(w).Encode(models.Tasks)
 }
