@@ -4,6 +4,7 @@ import (
     "net/http"
     "github.com/gorilla/mux"
     "strconv"
+	"task/models"
 
 )
 
@@ -15,9 +16,9 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for i, task := range Tasks {
+	for i, task := range models.Tasks {
 		if task.ID == taskID {
-			Tasks = append(Tasks[:i], Tasks[i+1:]...)
+			models.Tasks = append(models.Tasks[:i], models.Tasks[i+1:]...)
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}
