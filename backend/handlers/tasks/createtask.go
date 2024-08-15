@@ -10,7 +10,6 @@ import (
 )
 
 var (
-//	Tasks         = []models.Task{}
 	TaskCounter   = 1
 )
 func CreateTask(w http.ResponseWriter, r *http.Request) {

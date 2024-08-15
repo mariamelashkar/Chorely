@@ -7,32 +7,29 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
+// validate_token.go
 func ValidateToken(tokenStr string) (jwt.MapClaims, error) {
-	claims, err := ParseJWT(tokenStr)
-	if err != nil {
-		if ve, ok := err.(*jwt.ValidationError); ok {
-			if ve.Errors&jwt.ValidationErrorExpired != 0 {
-				if userID, ok := claims["user_id"].(string); ok {
-					Client.Del(Ctx, "token:"+userID)
-				}
-				return nil, errors.New("token is expired")
-			}
-		}
-		return nil, err
-	}
+    fmt.Printf("Validating token: %s\n", tokenStr)
 
-	userID, ok := claims["user_id"].(string)
-	if !ok {
-		return nil, errors.New("user ID not found in token claims")
-	}
+    claims, err := ParseJWT(tokenStr)
+    if err != nil {
+        fmt.Printf("Error parsing JWT: %v\n", err)
+        return nil, err
+    }
 
-	storedToken, err := Client.Get(Ctx, "token:"+userID).Result()
-	if err == redis.Nil || storedToken != tokenStr {
-		fmt.Println("invalid token")
-		return nil, errors.New("invalid token")
-	} else if err != nil {
-		return nil, err
-	}
+    userID, ok := claims["user_id"].(string)
+    if !ok {
+        return nil, errors.New("user ID not found in token claims")
+    }
 
-	return claims, nil
+    storedToken, err := Client.Get(Ctx, "token:"+userID).Result()
+    if err == redis.Nil || storedToken != tokenStr {
+        fmt.Println("Invalid token detected")
+        return nil, errors.New("invalid token")
+    } else if err != nil {
+        return nil, err
+    }
+
+    fmt.Println("Token validated successfully")
+    return claims, nil
 }

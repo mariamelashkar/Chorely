@@ -5,24 +5,19 @@ import (
 	"task/routers"
 	"github.com/rs/cors"
 	"log"
-	"github.com/joho/godotenv"
 	"task/internal/redis"
-
+	"task/config"
 
 )
 
 func main() {
-	router := routers.InitRoutes()
-	redis.InitRedis()
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
-
+		config.InitConfig()	
+		router := routers.InitRoutes()
+		redis.InitRedis()
 	// Configure CORS settings
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"}, // Allow all origins, you can specify your frontend URL here
+		AllowedOrigins:   []string{"http://localhost:3001"}, // Allow all origins, you can specify your frontend URL here
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
 		ExposedHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},

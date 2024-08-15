@@ -2,38 +2,46 @@ package tasks
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
+	"task/middlewares"
 	"task/models"
-    auth  "task/handlers/auth"
 )
-
-
 func GetTasks(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	userID, err := strconv.Atoi(r.URL.Query().Get("user_id"))
-	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
-		return
-	}
+    w.Header().Set("Content-Type", "application/json")
 
+    var userID string
+
+    userIDStr := r.URL.Query().Get("user_id")
+    if userIDStr != "" {
+        userID = userIDStr
+    } else {
+        userIDInt, ok := r.Context().Value(middlewares.UserIDKey).(int)
+        if !ok {
+            http.Error(w, "User not found", http.StatusUnauthorized)
+            log.Println("User not found in context")
+            return
+        }
+        userID = strconv.Itoa(userIDInt)
+    }
+
+    tasks, err := GetTasksByUserID(userID)
+    if err != nil {
+        http.Error(w, "Failed to fetch tasks", http.StatusInternalServerError)
+        log.Printf("Failed to fetch tasks for user %s: %v", userID, err)
+        return
+    }
+
+    log.Printf("Fetched tasks for user %s", userID)
+    json.NewEncoder(w).Encode(tasks)
+}
+func GetTasksByUserID(userID string) ([]models.Task, error) {
 	var userTasks []models.Task
 	for _, task := range models.Tasks {
-		for _, user := range auth.Users {
-			if user.ID == userID {
-				for _, tID := range user.Tasks {
-					if tID == task.ID {
-						userTasks = append(userTasks, task)
-					}
-				}
-			}
+		if task.AssignedTo == userID {
+			userTasks = append(userTasks, task)
 		}
 	}
-
-	json.NewEncoder(w).Encode(userTasks)
-}
-
-func GetAllTasks(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(models.Tasks)
+	return userTasks, nil
 }

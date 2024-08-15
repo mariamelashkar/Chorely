@@ -10,7 +10,6 @@ import (
 var (
 	Client    *redis.Client
 	Ctx       = context.Background()
-	JwtSecret = []byte(os.Getenv("JWT_SECRET"))
 )
 
 func InitRedis() {

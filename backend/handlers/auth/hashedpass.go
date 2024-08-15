@@ -1,24 +1,33 @@
 package auth
 
-
 import (
-	"golang.org/x/crypto/bcrypt"
+    "crypto/sha256"
+    "encoding/hex"
+    "errors"
+    "log"
 )
 
-// func HashPassword(Password string) string {
-// 	hashedPassword := sha256.Sum256([]byte(Password))
-// 	return hex.EncodeToString(hashedPassword[:])
-// }
-
-
-
-// HashPassword hashes the plain text password using bcrypt
 func HashPassword(password string) (string, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return string(hashedPassword), err
+    if password == "" {
+        log.Println("HashPassword: password cannot be empty")
+        return "", errors.New("password cannot be empty")
+    }
+    hashedPassword := sha256.Sum256([]byte(password))
+    hashString := hex.EncodeToString(hashedPassword[:])
+    log.Printf("HashPassword: password hashed successfully: %s", hashString)
+    return hashString, nil
 }
 
-// CheckPasswordHash compares a plain text password with a hashed password
 func CheckPasswordHash(password, hash string) error {
-	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+    hashedPassword, err := HashPassword(password)
+    if err != nil {
+        log.Println("CheckPasswordHash: error hashing password:", err)
+        return err
+    }
+    if hashedPassword != hash {
+        log.Println("CheckPasswordHash: password mismatch")
+        return errors.New("password mismatch")
+    }
+    log.Println("CheckPasswordHash: password match")
+    return nil
 }

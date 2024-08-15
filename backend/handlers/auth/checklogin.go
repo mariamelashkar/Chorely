@@ -1,35 +1,49 @@
 package auth
 
-import (
-	"errors"
+// import (
+//     "encoding/json"
+//     "net/http"
+//     "strings"
+//     "task/internal/redis"
+// )
 
-	"fmt"
+// func CheckLogin(w http.ResponseWriter, r *http.Request) {
+//     cookie, err := r.Cookie("Authorization")
+//     if err != nil {
+//         http.Error(w, "Authorization cookie required", http.StatusUnauthorized)
+//         return
+//     }
 
-)
-func CheckUserCredentials(username, password string) (int, bool, error) {
-	Mu.Lock()
-	defer Mu.Unlock()
+//     parts := strings.Split(cookie.Value, "Bearer ")
+//     if len(parts) != 2 {
+//         http.Error(w, "Invalid authorization cookie format", http.StatusUnauthorized)
+//         return
+//     }
 
-	user, exists := Users[username]
-	if !exists {
-		fmt.Printf("Login attempt failed for user: %s. Reason: user does not exist\n", username)
-		return 0, false, errors.New("invalid username or password")
-	}
+//     tokenString := parts[1]
+//     claims, err := redis.ParseJWT(tokenString)
+//     if err != nil {
+//         http.Error(w, "Invalid token", http.StatusUnauthorized)
+//         return
+//     }
 
-	fmt.Printf("Login attempt for user: %s\n", username)
-	fmt.Printf("Entered Password: %s\n", password)
-	fmt.Printf("Stored Password Hash: %s\n", user.Password)
+//     userID, ok := claims["user_id"].(float64)
+//     if !ok {
+//         http.Error(w, "Invalid token claims", http.StatusUnauthorized)
+//         return
+//     }
 
-	err :=CheckPasswordHash(password, user.Password)
-	if err != nil {
-		fmt.Printf("Login attempt failed for user: %s. Reason: password mismatch\n", username)
-		return 0, false, errors.New("invalid username or password")
-	}
+//     userRole, ok := claims["role"].(string)
+//     if !ok {
+//         http.Error(w, "Invalid token claims", http.StatusUnauthorized)
+//         return
+//     }
 
-	userID, exists := UserIDs[username]
-	if !exists {
-		return 0, false, errors.New("user ID not found")
-	}
+//     response := map[string]interface{}{
+//         "user_id": userID,
+//         "role":    userRole,
+//     }
 
-	return userID, true, nil
-}
+//     w.Header().Set("Content-Type", "application/json")
+//     json.NewEncoder(w).Encode(response)
+// }
