@@ -8,6 +8,16 @@ import (
 	"task/middlewares"
 	"task/models"
 )
+
+// GetTasks godoc
+// @Summary Get tasks for a user
+// @Description Retrieves all tasks for the authenticated user
+// @Tags Tasks
+// @Produce  json
+// @Success 200 {array} models.Task "List of tasks"
+// @Failure 401 {string} string "Unauthorized"
+// @Security BearerAuth
+// @Router /api/user/tasks [get]
 func GetTasks(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
 

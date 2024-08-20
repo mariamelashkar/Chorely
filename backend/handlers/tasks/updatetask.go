@@ -10,7 +10,20 @@ import (
 	"sync"
     "fmt"
 )
-
+// UpdateTaskHandler godoc
+// @Summary Update an existing task
+// @Description Updates the details of an existing task (admin only)
+// @Tags Tasks
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Task ID"
+// @Param task body models.Task true "Task Data"
+// @Success 200 {object} models.Task "Updated task"
+// @Failure 400 {string} string "Invalid request payload"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Task not found"
+// @Security BearerAuth
+// @Router /api/admin/tasks/{id} [put]
 var Mu sync.Mutex
 func UpdateTask(intID int, updateTask models.Task) error {
     Mu.Lock()

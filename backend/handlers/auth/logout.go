@@ -1,46 +1,58 @@
 package auth
 
-// import (
-//     "context"
-//     "net/http"
-//     "task/internal/redis"
-//     "log"
-// )
-// func Logout(w http.ResponseWriter, r *http.Request) {
-//     // Debug: Print all cookies
-//     cookies := r.Cookies()
-//     for _, c := range cookies {
-//         log.Printf("Cookie Name: %s, Value: %s", c.Name, c.Value)
-//     }
+import (
+    "net/http"
+    "task/internal/redis"
+    "log"
+	"strings"
+)
 
-//     cookie, err := r.Cookie("Authorization")
-//     if err == nil {
-//         token := cookie.Value
-//         // Debug: Print the token value
-//         log.Printf("Authorization Token: %s", token)
-        
-//         if err := redis.Rdb.Del(context.Background(), token).Err(); err != nil {
-//             log.Printf("Failed to delete token from Redis: %v", err)
-//         } else {
-//             log.Println("Token successfully deleted from Redis")
-//         }
-//     } else {
-//         log.Println("Authorization cookie not found")
-//     }
+// LogoutHandler godoc
+// @Summary Logs out a user
+// @Description Logs out a user by invalidating the JWT token
+// @Tags Authentication
+// @Produce  json
+// @Success 200 {string} string "Logged out successfully"
+// @Failure 401 {string} string "Invalid token or token already expired"
+// @Security BearerAuth
+// @Router /api/logout [post]
+func Logout(w http.ResponseWriter, r *http.Request) {
+    // Extract the Authorization token from the request header
+    authHeader := r.Header.Get("Authorization")
+    if authHeader == "" {
+        log.Println("Authorization header is missing")
+        http.Error(w, "Authorization header is missing", http.StatusUnauthorized)
+        return
+    }
 
-//     // Debug: Indicate that the cookie is being cleared
-//     log.Println("Clearing the Authorization cookie")
+    // Split the Bearer token
+    parts := strings.Split(authHeader, " ")
+    if len(parts) != 2 {
+        log.Println("Invalid authorization header format")
+        http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
+        return
+    }
 
-//     http.SetCookie(w, &http.Cookie{
-//         Name:     "Authorization",
-//         Value:    "",
-//         Path:     "/",
-//         MaxAge:   -1,
-//         HttpOnly: true,
-//     })
+    tokenString := parts[1]
+    log.Printf("Token received: %s", tokenString)
 
-//     log.Println("User logged out successfully")
-    
-//     w.WriteHeader(http.StatusOK)
-//     w.Write([]byte("Logged out successfully"))
-// }
+    // Remove the token from Redis using your existing RemoveToken function
+    if err := redis.RemoveToken(tokenString); err != nil {
+        log.Printf("Failed to remove token: %v", err)
+        http.Error(w, "Invalid token or token already expired", http.StatusUnauthorized)
+        return
+    }
+
+    // Clear the Authorization cookie
+    http.SetCookie(w, &http.Cookie{
+        Name:     "Authorization",
+        Value:    "",
+        Path:     "/",
+        MaxAge:   -1,
+        HttpOnly: true,
+    })
+
+    log.Println("User logged out successfully")
+    w.WriteHeader(http.StatusOK)
+    w.Write([]byte("Logged out successfully"))
+}

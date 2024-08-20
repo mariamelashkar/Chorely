@@ -8,6 +8,18 @@ import (
 
 
 )
+
+// DeleteUserHandler godoc
+// @Summary Delete a user
+// @Description Deletes a user from the system (admin only)
+// @Tags Users
+// @Produce  json
+// @Param id path int true "User ID"
+// @Success 204 {string} string "User deleted successfully"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "User not found"
+// @Security BearerAuth
+// @Router /api/admin/users/{id} [delete]
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userIDStr := vars["id"]

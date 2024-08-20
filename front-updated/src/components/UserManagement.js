@@ -1,145 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Select } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-
-const { Option } = Select;
+import React, { useEffect, useState } from 'react';
+import { fetchUsers, createUser, updateUser, deleteUser } from '../api'; // Import the centralized API
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
-  const [isUserModalVisible, setIsUserModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [userForm] = Form.useForm();
+  const [formState, setFormState] = useState({ username: '', password: '' });
 
   useEffect(() => {
-    fetchUsers();
+    const getUsers = async () => {
+      try {
+        const data = await fetchUsers();
+        setUsers(data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    getUsers();
   }, []);
 
-  const fetchUsers = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const response = await fetch('/api/users');
-      const data = await response.json();
-      setUsers(data);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
-  };
-
-  const showUserModal = (user) => {
-    setSelectedUser(user);
-    if (user) {
-      userForm.setFieldsValue(user);
-    }
-    setIsUserModalVisible(true);
-  };
-
-  const handleUserModalCancel = () => {
-    setIsUserModalVisible(false);
-    setSelectedUser(null);
-    userForm.resetFields();
-  };
-
-  const onUserFinish = async (values) => {
-    try {
-      const response = selectedUser
-        ? await fetch(`/api/users/${selectedUser.id}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(values),
-          })
-        : await fetch('/api/users', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(values),
-          });
-      if (response.ok) {
-        fetchUsers();
-        handleUserModalCancel();
+      if (selectedUser) {
+        await updateUser(selectedUser.id, formState);
+      } else {
+        await createUser(formState);
       }
+      const data = await fetchUsers();
+      setUsers(data);
+      setFormState({ username: '', password: '' });
+      setSelectedUser(null);
     } catch (error) {
       console.error('Error saving user:', error);
     }
   };
 
-  const deleteUser = async (userId) => {
-    Modal.confirm({
-      title: 'Are you sure you want to delete this user?',
-      icon: <ExclamationCircleOutlined />,
-      onOk: async () => {
-        try {
-          const response = await fetch(`/api/users/${userId}`, {
-            method: 'DELETE',
-          });
-          if (response.ok) {
-            fetchUsers();
-          }
-        } catch (error) {
-          console.error('Error deleting user:', error);
-        }
-      },
-    });
+  const handleDelete = async (userId) => {
+    try {
+      await deleteUser(userId);
+      const data = await fetchUsers();
+      setUsers(data);
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
   };
-
-  const userColumns = [
-    {
-      title: 'Username',
-      dataIndex: 'username',
-      key: 'username',
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-    },
-    {
-      title: 'Role',
-      dataIndex: 'role',
-      key: 'role',
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (text, record) => (
-        <>
-          <Button onClick={() => showUserModal(record)}>Edit</Button>
-          <Button onClick={() => deleteUser(record.id)}>Delete</Button>
-        </>
-      ),
-    },
-  ];
 
   return (
     <div>
-      <Button onClick={() => showUserModal(null)}>Create User</Button>
-      <Table columns={userColumns} dataSource={users} rowKey="id" />
-
-      <Modal title={selectedUser ? 'Edit User' : 'Create User'} visible={isUserModalVisible} onCancel={handleUserModalCancel} footer={null}>
-        <Form form={userForm} onFinish={onUserFinish}>
-          <Form.Item name="username" label="Username" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="password" label="Password" rules={[{ required: true }]}>
-            <Input.Password />
-          </Form.Item>
-          <Form.Item name="role" label="Role" rules={[{ required: true }]}>
-            <Select>
-              <Option value="admin">Admin</Option>
-              <Option value="user">User</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Save User
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+      <h1>User Management</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Username"
+          value={formState.username}
+          onChange={(e) => setFormState({ ...formState, username: e.target.value })}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={formState.password}
+          onChange={(e) => setFormState({ ...formState, password: e.target.value })}
+        />
+        <button type="submit">{selectedUser ? 'Update User' : 'Create User'}</button>
+      </form>
+      <ul>
+        {users.map(user => (
+          <li key={user.id}>
+            {user.username}
+            <button onClick={() => setSelectedUser(user)}>Edit</button>
+            <button onClick={() => handleDelete(user.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

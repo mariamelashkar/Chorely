@@ -8,7 +8,18 @@ import (
 	"github.com/sirupsen/logrus"
 
 )
-
+// CreateTask godoc
+// @Summary Create a new task
+// @Description Creates a new task in the system (admin only)
+// @Tags Tasks
+// @Accept  json
+// @Produce  json
+// @Param task body models.Task true "Task Data"
+// @Success 201 {object} models.Task "Created task"
+// @Failure 400 {string} string "Invalid request payload"
+// @Failure 401 {string} string "Unauthorized"
+// @Security BearerAuth
+// @Router /api/admin/tasks [post]
 var (
 	TaskCounter   = 1
 )

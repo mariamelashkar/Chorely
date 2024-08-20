@@ -4,13 +4,13 @@ import { Layout } from 'antd';
 import { AuthProvider, AuthContext } from './components/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import Login from './components/Login';
-import Dashboard from './components/AdminDashboard';
+import AdminDashboard from './components/AdminDashboard';
+import UserDashboard from './components/UserDashboard';
 import TaskManagement from './components/TaskManagement';
 import UserManagement from './components/UserManagement';
 import Settings from './components/Settings';
 import SideMenu from './components/SideMenu';
 import './index.css';
-
 
 const { Header, Content, Sider } = Layout;
 
@@ -34,11 +34,11 @@ const App = () => {
                 path="/dashboard"
                 element={
                   <PrivateRoute>
-                    <Dashboard />
+                    {auth.user?.role === 'admin' ? <AdminDashboard /> : <UserDashboard />}
                   </PrivateRoute>
                 }
               />
-            <Route
+              <Route
                 path="/tasks"
                 element={
                   <PrivateRoute>

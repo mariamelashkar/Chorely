@@ -8,7 +8,18 @@ import (
 	"task/internal/redis"
 	"task/models"
 )
-
+// LoginHandler godoc
+// @Summary Logs in a user
+// @Description Logs in a user and returns a JWT token
+// @Tags Authentication
+// @Accept  json
+// @Produce  json
+// @Param loginRequest body models.LoginRequest true "Login Request"
+// @Success 200 {object} map[string]string "token"
+// @Failure 400 {string} string "Invalid request payload"
+// @Failure 401 {string} string "Invalid username or password"
+// @Security BearerAuth
+// @Router /api/login [post]
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Login handler called")
 

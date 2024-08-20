@@ -7,7 +7,17 @@ import (
 	"task/models"
 
 )
-
+// DeleteTask godoc
+// @Summary Delete a task
+// @Description Deletes a task from the system (admin only)
+// @Tags Tasks
+// @Produce  json
+// @Param id path int true "Task ID"
+// @Success 204 {string} string "Task deleted successfully"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Task not found"
+// @Security BearerAuth
+// @Router /api/admin/tasks/{id} [delete]
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	taskID, err := strconv.Atoi(params["id"])

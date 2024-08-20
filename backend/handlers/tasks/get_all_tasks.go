@@ -6,8 +6,15 @@ import (
 	"net/http"
 )
 
-
-
+// GetAllTasksHandler godoc
+// @Summary Get all tasks
+// @Description Retrieves all tasks in the system (admin only)
+// @Tags Tasks
+// @Produce  json
+// @Success 200 {array} models.Task "List of tasks"
+// @Failure 401 {string} string "Unauthorized"
+// @Security BearerAuth
+// @Router /api/admin/tasks [get]
 func GetAllTasksHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 

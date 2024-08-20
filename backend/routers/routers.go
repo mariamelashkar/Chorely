@@ -21,10 +21,9 @@ func InitRoutes() *mux.Router {
 
 	// Public routes
 	router.HandleFunc("/api/login", auth.LoginHandler).Methods("POST")
-	//router.HandleFunc("/api/logout", auth.Logout).Methods("POST")
-	//router.HandleFunc("/api/checklogin", auth.CheckLogin).Methods("GET")
-    router.HandleFunc("/api/testuser",auth.AddUserHandler).Methods("POST")
-	//router.HandleFunc("/users", auth.GetUsers).Methods("GET")
+	router.HandleFunc("/api/logout", auth.Logout).Methods("POST")
+    router.HandleFunc("/api/testuser",auth.AddTestUserHandler).Methods("POST")
+	// router.HandleFunc("/users", auth.GetUsers).Methods("GET") //test purposes
 
 
 	// User routes with authentication

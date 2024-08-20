@@ -1,114 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal } from 'antd';
-import CreateUser from './CreateUser';
-import EditUser from './EditUser';
-import '../styles/AdminDashboard.css';
+import React, { useEffect, useState } from 'react';
+import { fetchAllTasks, createTask, updateTask, deleteTask } from '../api'; // Import the centralized API
 
 const AdminDashboard = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-
-  const fetchUsers = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('http://localhost:8080/api/users');
-      const data = await response.json();
-      setUsers(data);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [tasks, setTasks] = useState([]);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [formState, setFormState] = useState({ title: '', description: '' });
 
   useEffect(() => {
-    fetchUsers();
+    const getTasks = async () => {
+      try {
+        const data = await fetchAllTasks();
+        setTasks(data);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+
+    getTasks();
   }, []);
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setSelectedUser(null);
-  };
-
-  const handleEdit = (user) => {
-    setSelectedUser(user);
-    setIsModalOpen(true);
-  };
-
-  const handleDelete = async (id) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      await fetch(`http://localhost:8080/api/users/${id}`, {
-        method: 'DELETE',
-      });
-      fetchUsers();
+      if (selectedTask) {
+        await updateTask(selectedTask.id, formState);
+      } else {
+        await createTask(formState);
+      }
+      const data = await fetchAllTasks();
+      setTasks(data);
+      setFormState({ title: '', description: '' });
+      setSelectedTask(null);
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error('Error saving task:', error);
     }
   };
 
-  const columns = [
-    {
-      title: 'Username',
-      dataIndex: 'username',
-      key: 'username',
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-    },
-    {
-      title: 'Role',
-      dataIndex: 'role',
-      key: 'role',
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <>
-          <Button onClick={() => handleEdit(record)}>Edit</Button>
-          <Button danger onClick={() => handleDelete(record.id)}>
-            Delete
-          </Button>
-        </>
-      ),
-    },
-  ];
+  const handleDelete = async (taskId) => {
+    try {
+      await deleteTask(taskId);
+      const data = await fetchAllTasks();
+      setTasks(data);
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
+  };
 
   return (
-    <div className="admin-dashboard">
-      <Button type="primary" onClick={showModal}>
-        Create User
-      </Button>
-      <Table
-        columns={columns}
-        dataSource={users}
-        loading={loading}
-        rowKey="id"
-      />
-      <Modal
-        title={selectedUser ? 'Edit User' : 'Create User'}
-        open={isModalOpen}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        {selectedUser ? (
-          <EditUser
-            initialValues={selectedUser}
-            onFinish={fetchUsers}
-            onCancel={handleCancel}
-          />
-        ) : (
-          <CreateUser onFinish={fetchUsers} onCancel={handleCancel} />
-        )}
-      </Modal>
+    <div>
+      <h1>Admin Dashboard</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Title"
+          value={formState.title}
+          onChange={(e) => setFormState({ ...formState, title: e.target.value })}
+        />
+        <input
+          type="text"
+          placeholder="Description"
+          value={formState.description}
+          onChange={(e) => setFormState({ ...formState, description: e.target.value })}
+        />
+        <button type="submit">{selectedTask ? 'Update Task' : 'Create Task'}</button>
+      </form>
+      <ul>
+        {tasks.map(task => (
+          <li key={task.id}>
+            {task.title} - {task.description}
+            <button onClick={() => setSelectedTask(task)}>Edit</button>
+            <button onClick={() => handleDelete(task.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
