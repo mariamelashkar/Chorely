@@ -8,19 +8,18 @@ import (
   "fmt"
 
 )
-// AddUserHandler godoc
-// @Summary Create a new user
-// @Description Adds a new user to the system (admin only)
+// TestAddUserHandler godoc
+// @Summary Create a test user
+// @Description This API creates a test user in the system for testing purposes.
 // @Tags Users
 // @Accept  json
 // @Produce  json
-// @Param user body models.User true "User Data"
-// @Success 201 {object} models.User "Created user"
-// @Failure 400 {string} string "Invalid request payload"
-// @Failure 401 {string} string "Unauthorized"
-// @Security BearerAuth
-// @Router /api/admin/users [post]
-func AddUser(username, email, password, role string) (int, error) {
+// @Param user body models.User true "Test User object"
+// @Success 200 {object} models.User "Test user created successfully"
+// @Failure 400 {string} string "Invalid input"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /api/testuser [post]
+func AddTestUser(username, email, password, role string) (int, error) {
 	Mu.Lock()
 	defer Mu.Unlock()
 
@@ -50,7 +49,7 @@ func AddUser(username, email, password, role string) (int, error) {
 	return UserIDCounter - 1, nil
 }
 
-func AddUserHandler(w http.ResponseWriter, r *http.Request) {
+func AddTestUserHandler(w http.ResponseWriter, r *http.Request) {
 	var registerRequest models.RegisterRequest
 
 	err := json.NewDecoder(r.Body).Decode(&registerRequest)

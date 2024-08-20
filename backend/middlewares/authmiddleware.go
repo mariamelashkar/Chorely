@@ -14,7 +14,6 @@ const (
 	UserIDKey   contextKey = "userID"
 	UserRoleKey contextKey = "userRole"
 )
-
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
@@ -35,14 +34,15 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		tokenString := parts[1]
 		log.Println("Token received:", tokenString)
 
-		claims, err := redis.ParseJWT(tokenString)
+		// Validate the token using the ValidateToken function
+		claims, err := redis.ValidateToken(tokenString)
 		if err != nil {
 			http.Error(w, "Invalid token", http.StatusUnauthorized)
 			log.Println("Invalid token:", err)
 			return
 		}
 
-		// Extract user ID from claims
+		// Extract user ID and role from claims
 		userID, ok := claims["user_id"].(string)
 		if !ok {
 			http.Error(w, "Invalid token claims", http.StatusUnauthorized)
@@ -50,7 +50,6 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Extract user role from claims
 		userRole, ok := claims["role"].(string)
 		if !ok {
 			http.Error(w, "Invalid token claims", http.StatusUnauthorized)
@@ -60,9 +59,9 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 		log.Printf("User ID: %s, Role: %s\n", userID, userRole)
 
+		// Pass the user ID and role to the context
 		ctx := context.WithValue(r.Context(), UserIDKey, userID)
 		ctx = context.WithValue(ctx, UserRoleKey, userRole)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
-

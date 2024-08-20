@@ -8,7 +8,20 @@ import (
 	"task/models"
 	
 )
-
+// AssignTask godoc
+// @Summary Assign a task to a user
+// @Description Assigns an existing task to a specific user (admin only)
+// @Tags Tasks
+// @Accept  json
+// @Produce  json
+// @Param user_id path int true "User ID"
+// @Param task_id path int true "Task ID"
+// @Success 200 {object} models.Task "Task assigned successfully"
+// @Failure 400 {string} string "Invalid request payload"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "User or Task not found"
+// @Security BearerAuth
+// @Router /api/admin/users/{user_id}/tasks/{task_id} [post]
 func AssignTask(w http.ResponseWriter, r *http.Request) {
     params := mux.Vars(r)
     userID, err := strconv.Atoi(params["user_id"])

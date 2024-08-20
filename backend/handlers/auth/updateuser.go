@@ -7,6 +7,20 @@ import (
 	"task/models"
 	"github.com/gorilla/mux"
 )
+// UpdateUserHandler godoc
+// @Summary Update an existing user
+// @Description Updates the details of an existing user (admin only)
+// @Tags Users
+// @Accept  json
+// @Produce  json
+// @Param id path int true "User ID"
+// @Param user body models.User true "User Data"
+// @Success 200 {object} models.User "Updated user"
+// @Failure 400 {string} string "Invalid request payload"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "User not found"
+// @Security BearerAuth
+// @Router /api/admin/users/{id} [put]
 func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     id := vars["id"]
