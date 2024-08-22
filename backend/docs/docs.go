@@ -488,7 +488,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "Tests"
                 ],
                 "summary": "Create a test user",
                 "parameters": [
@@ -646,7 +646,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Task Management System API",
+	Title:            "Task Management System APIs",
 	Description:      "This is a sample server for a Task Management System.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

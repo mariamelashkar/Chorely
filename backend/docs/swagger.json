@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "description": "This is a sample server for a Task Management System.",
-        "title": "Task Management System API",
+        "title": "Task Management System APIs",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {}
     },
@@ -479,7 +479,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "Tests"
                 ],
                 "summary": "Create a test user",
                 "parameters": [
