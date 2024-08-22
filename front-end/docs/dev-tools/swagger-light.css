@@ -1,0 +1,18 @@
+.swagger-ui {
+    background-color: white;
+    color: #24292e;
+}
+
+.swagger-ui .info, .swagger-ui .opblock-summary {
+    background-color: #f6f8fa;
+    color: #24292e;
+}
+
+.swagger-ui .btn.authorize {
+    background-color: #0366d6;
+}
+
+.swagger-ui .response-col_status {
+    background-color: #28a745;
+    color: white;
+}

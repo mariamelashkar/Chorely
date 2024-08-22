@@ -49,7 +49,7 @@ info:
   contact: {}
   description: This is a sample server for a Task Management System.
   termsOfService: http://swagger.io/terms/
-  title: Task Management System API
+  title: Task Management System APIs
 paths:
   /api/admin/tasks:
     get:
@@ -373,7 +373,7 @@ paths:
             type: string
       summary: Create a test user
       tags:
-      - Users
+      - Tests
   /api/user/tasks:
     get:
       description: Retrieves all tasks for the authenticated user

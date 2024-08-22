@@ -11,7 +11,7 @@ import (
 // TestAddUserHandler godoc
 // @Summary Create a test user
 // @Description This API creates a test user in the system for testing purposes.
-// @Tags Users
+// @Tags Tests
 // @Accept  json
 // @Produce  json
 // @Param user body models.User true "Test User object"

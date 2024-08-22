@@ -1,0 +1,4 @@
+.swagger-ui .info .version {
+    background-color: #4CAF50 !important; /* Change to your preferred color */
+    color: white !important; /* Ensure the text is readable */
+}
