@@ -1,0 +1,24 @@
+{
+  "unversionedId": "dev-tools/apis",
+  "id": "dev-tools/apis",
+  "isDocsHomePage": false,
+  "title": "APIs Documentation",
+  "description": "Below is the interactive Swagger UI:",
+  "source": "@site/docs/dev-tools/apis.mdx",
+  "sourceDirName": "dev-tools",
+  "slug": "/dev-tools/apis",
+  "permalink": "/docs/dev-tools/apis",
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/dev-tools/apis.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "contributing",
+    "permalink": "/docs/contributing"
+  },
+  "next": {
+    "title": "Installation",
+    "permalink": "/docs/installation"
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "loadedVersions": [
+        {
+          "versionName": "current",
+          "versionLabel": "Next",
+          "versionPath": "/docs",
+          "tagsPath": "/docs/tags",
+          "versionEditUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs",
+          "versionEditUrlLocalized": "https://github.com/facebook/docusaurus/edit/main/website/i18n/en/docusaurus-plugin-content-docs/current",
+          "versionBanner": null,
+          "versionBadge": false,
+          "versionClassName": "docs-version-current",
+          "isLast": true,
+          "routePriority": -1,
+          "sidebarFilePath": "/home/maryoma/workspace/taskmanagment/frontend/sidebars.js",
+          "contentPath": "/home/maryoma/workspace/taskmanagment/frontend/docs",
+          "contentPathLocalized": "/home/maryoma/workspace/taskmanagment/frontend/i18n/en/docusaurus-plugin-content-docs/current",
+          "mainDocId": "contributing",
+          "sidebars": {
+            "tutorialSidebar": [
+              {
+                "type": "doc",
+                "id": "contributing"
+              },
+              {
+                "type": "category",
+                "label": "dev-tools",
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "dev-tools/apis"
+                  }
+                ],
+                "collapsed": true,
+                "collapsible": true
+              },
+              {
+                "type": "doc",
+                "id": "installation"
+              },
+              {
+                "type": "doc",
+                "id": "intro"
+              },
+              {
+                "type": "doc",
+                "id": "quick-start"
+              }
+            ]
+          },
+          "docs": [
+            {
+              "unversionedId": "contributing",
+              "id": "contributing",
+              "isDocsHomePage": false,
+              "title": "contributing",
+              "description": "",
+              "source": "@site/docs/contributing.md",
+              "sourceDirName": ".",
+              "slug": "/contributing",
+              "permalink": "/docs/contributing",
+              "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/contributing.md",
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "tutorialSidebar",
+              "next": {
+                "title": "APIs Documentation",
+                "permalink": "/docs/dev-tools/apis"
+              }
+            },
+            {
+              "unversionedId": "dev-tools/apis",
+              "id": "dev-tools/apis",
+              "isDocsHomePage": false,
+              "title": "APIs Documentation",
+              "description": "Below is the interactive Swagger UI:",
+              "source": "@site/docs/dev-tools/apis.mdx",
+              "sourceDirName": "dev-tools",
+              "slug": "/dev-tools/apis",
+              "permalink": "/docs/dev-tools/apis",
+              "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/dev-tools/apis.mdx",
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "contributing",
+                "permalink": "/docs/contributing"
+              },
+              "next": {
+                "title": "Installation",
+                "permalink": "/docs/installation"
+              }
+            },
+            {
+              "unversionedId": "installation",
+              "id": "installation",
+              "isDocsHomePage": false,
+              "title": "Installation",
+              "description": "This comprehensive guide will help you set up the Task Management System on your local machine for development or production purposes.",
+              "source": "@site/docs/installation.md",
+              "sourceDirName": ".",
+              "slug": "/installation",
+              "permalink": "/docs/installation",
+              "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/installation.md",
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "APIs Documentation",
+                "permalink": "/docs/dev-tools/apis"
+              },
+              "next": {
+                "title": "Task Management System",
+                "permalink": "/docs/intro"
+              }
+            },
+            {
+              "unversionedId": "intro",
+              "id": "intro",
+              "isDocsHomePage": false,
+              "title": "Task Management System",
+              "description": "Welcome to the documentation for the Task Management System.",
+              "source": "@site/docs/intro.md",
+              "sourceDirName": ".",
+              "slug": "/intro",
+              "permalink": "/docs/intro",
+              "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/intro.md",
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "Installation",
+                "permalink": "/docs/installation"
+              },
+              "next": {
+                "title": "Quick Start Guide",
+                "permalink": "/docs/quick-start"
+              }
+            },
+            {
+              "unversionedId": "quick-start",
+              "id": "quick-start",
+              "isDocsHomePage": false,
+              "title": "Quick Start Guide",
+              "description": "This document provides a quick start guide for using the Task Management System.",
+              "source": "@site/docs/quick-start.md",
+              "sourceDirName": ".",
+              "slug": "/quick-start",
+              "permalink": "/docs/quick-start",
+              "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/quick-start.md",
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "Task Management System",
+                "permalink": "/docs/intro"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "docusaurus-plugin-content-blog": {
+    "default": {
+      "blogSidebarTitle": "Recent posts",
+      "blogPosts": [],
+      "blogListPaginated": [],
+      "blogTags": {},
+      "blogTagsListPath": null
+    }
+  },
+  "docusaurus-plugin-content-pages": {
+    "default": [
+      {
+        "type": "jsx",
+        "permalink": "/",
+        "source": "@site/src/pages/index.js"
+      },
+      {
+        "type": "mdx",
+        "permalink": "/markdown-page",
+        "source": "@site/src/pages/markdown-page.md"
+      }
+    ]
+  },
+  "docusaurus-plugin-debug": {
+    "default": null
+  },
+  "docusaurus-theme-classic": {
+    "default": null
+  }
+}

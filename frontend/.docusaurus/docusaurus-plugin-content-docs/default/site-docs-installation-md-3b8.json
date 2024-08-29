@@ -1,0 +1,24 @@
+{
+  "unversionedId": "installation",
+  "id": "installation",
+  "isDocsHomePage": false,
+  "title": "Installation",
+  "description": "This comprehensive guide will help you set up the Task Management System on your local machine for development or production purposes.",
+  "source": "@site/docs/installation.md",
+  "sourceDirName": ".",
+  "slug": "/installation",
+  "permalink": "/docs/installation",
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/installation.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "APIs Documentation",
+    "permalink": "/docs/dev-tools/apis"
+  },
+  "next": {
+    "title": "Task Management System",
+    "permalink": "/docs/intro"
+  }
+}

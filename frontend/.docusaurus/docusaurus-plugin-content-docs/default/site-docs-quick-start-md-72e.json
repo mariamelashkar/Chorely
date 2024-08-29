@@ -1,0 +1,20 @@
+{
+  "unversionedId": "quick-start",
+  "id": "quick-start",
+  "isDocsHomePage": false,
+  "title": "Quick Start Guide",
+  "description": "This document provides a quick start guide for using the Task Management System.",
+  "source": "@site/docs/quick-start.md",
+  "sourceDirName": ".",
+  "slug": "/quick-start",
+  "permalink": "/docs/quick-start",
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/quick-start.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Task Management System",
+    "permalink": "/docs/intro"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "unversionedId": "contributing",
+  "id": "contributing",
+  "isDocsHomePage": false,
+  "title": "contributing",
+  "description": "",
+  "source": "@site/docs/contributing.md",
+  "sourceDirName": ".",
+  "slug": "/contributing",
+  "permalink": "/docs/contributing",
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/contributing.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "next": {
+    "title": "APIs Documentation",
+    "permalink": "/docs/dev-tools/apis"
+  }
+}
