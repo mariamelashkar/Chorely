@@ -15,7 +15,7 @@ var (
 func InitRedis() {
 	redisAddr := os.Getenv("REDIS_ADDR")
 	if redisAddr == "" {
-		redisAddr = "localhost:6379"
+		redisAddr = "localhost:6379" 
 	}
 
 	Client = redis.NewClient(&redis.Options{

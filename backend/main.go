@@ -23,6 +23,6 @@ func main() {
 		redis.InitRedis()
 	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
-	log.Println("Server started at :8081")
-	log.Fatal(http.ListenAndServe(":8081", router))
+	log.Println("Server started at :8080")
+	log.Fatal(http.ListenAndServe(":8080", router))
 }

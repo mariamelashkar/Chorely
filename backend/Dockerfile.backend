@@ -23,6 +23,9 @@ WORKDIR /root/
 # Copy the built Go binary from the builder stage
 COPY --from=builder /app/main .
 
+# Copy the .env file to the working directory
+COPY .env .
+
 # Expose the port the app runs on
 EXPOSE 8080
 

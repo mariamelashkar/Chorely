@@ -18,7 +18,7 @@ func InitConfig() {
         log.Fatal("JWT_SECRET is not set")
     }
 
-    JwtSecret = []byte(secret) // Directly use the secret as a byte slice
+    JwtSecret = []byte(secret)
 
     log.Printf("Using JwtSecret: %s\n", JwtSecret)
 }
